@@ -1,0 +1,31 @@
+{
+    "name": "bridgetown-api",
+    "description": "Common methods needed to implement a REST based API",
+    "main": "./lib/bridgetown-api",
+    "author": "Travis McHattie",
+    "version": "0.0.1",
+    "repository": {
+        "type": "git",
+        "url": "git@git.thinksolid.com:msci/msci-api.git"
+    },
+    "bugs": {
+        "url": "https://solidinteractive.atlassian.net/browse/MSCIAPI"
+    },
+    "engines": {
+        "node": "0.10.17",
+        "npm": "1.3.9"
+    },
+    "dependencies": {
+
+    },
+    "devDependencies": {
+        "matchdep": "~0.3.0",
+        "mocha": "~1.16.2",
+        "chai": "~1.8.1",
+        "supertest": "~0.8.2",
+        "grunt": "~0.4.2"
+    },
+    "scripts": {
+        "test": "mocha --reporter spec"
+    }
+}
