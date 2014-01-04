@@ -1,11 +1,10 @@
-var should = require('chai').should(),
-    http = require('http'),
+var http = require('http'),
     bridgetownApi = require('../lib/bridgetown-api'),
-    middleware = bridgetownApi.middleware,
-    q = require('q');
+    middleware = bridgetownApi.middleware;
 
+require('chai').should();
 describe('Authorization Validation', function(){
-    "use strict";
+    'use strict';
 
     var port = 3210;
 
@@ -32,7 +31,7 @@ describe('Authorization Validation', function(){
             server = http.createServer(function (req, res) {
                 middleware.authorization(req, res, function(){
                     // This should not happen.
-                    "Should not have passed".should.equal("No authorization header was supplied.");
+                    'Should not have passed'.should.equal('No authorization header was supplied.');
                     done();
                 });
             });
@@ -54,8 +53,8 @@ describe('Authorization Validation', function(){
             },
             request = http.request(options, function(res){
                 res.setEncoding('utf8');
-                res.on('data', function (chunk) {
-                    "Should not have passed".should.equal("Authorization header was supplied, should not have failed.");
+                res.on('data', function () {
+                    'Should not have passed'.should.equal('Authorization header was supplied, should not have failed.');
                     done();
                 });
             }),

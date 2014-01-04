@@ -1,15 +1,16 @@
-var should = require('chai').should(),
-    http = require('http'),
+var http = require('http'),
     bridgetownApi = require('../lib/bridgetown-api'),
     middleware = bridgetownApi.middleware,
     q = require('q');
 
+require('chai').should();
 describe('API-KEY Validation', function(){
-    "use strict";
+    'use strict';
 
     var port = 3210;
 
-    it('should receive a 403 because the api is trying to be used before registering an API-KEY precondition.', function(done) {
+    it('should receive a 403 because the api is trying to be used before registering an API-KEY precondition.',
+        function(done) {
         var options = {
                 host: 'localhost',
                 port: port,
@@ -35,7 +36,7 @@ describe('API-KEY Validation', function(){
             server = http.createServer(function (req, res) {
                 middleware.apiKey(req, res, function(){
                     // This should not happen.
-                    "Should not have passed".should.equal("This was an invalid API Key");
+                    'Should not have passed'.should.equal('This was an invalid API Key');
                     done();
                 });
             });
@@ -106,7 +107,7 @@ describe('API-KEY Validation', function(){
             server = http.createServer(function (req, res) {
                 middleware.apiKey(req, res, function(){
                     // This should not happen.
-                    "Should not have passed".should.equal("This was an invalid API Key");
+                    'Should not have passed'.should.equal('This was an invalid API Key');
                     done();
                 });
             });
