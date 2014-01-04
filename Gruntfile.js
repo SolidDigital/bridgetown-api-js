@@ -7,6 +7,7 @@ module.exports = function (grunt) {
 
     // Project configuration.
     grunt.initConfig({
+
         jshint : {
             files : [
                 'lib/**/*.js',
@@ -15,6 +16,18 @@ module.exports = function (grunt) {
             options : {
                 jshintrc : '.jshintrc'
             }
+        },
+
+        shell : {
+            test: {
+                options: {
+                    stdout: true,
+                    stderr: true
+                },
+                command: "make test"
+            }
         }
     });
+
+    grunt.registerTask('test', 'Lint and run tests', ['jshint', 'shell:test']);
 };
