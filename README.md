@@ -149,3 +149,78 @@ HTTP Status <Error Code>
 }
 ```
 
+## Logging
+
+We know debugging is important, so by default we added a VERY basic logger that prints to the console when the api is in `debug` mode.
+
+You can turn on `debug` mode in the configure method.
+
+```
+bridgetownApi.configure(function(){
+    this.debug = true;
+    ... your other config code...
+});
+```
+
+This logger is purposefully very simple, there are a ton of really good loggers out there and you are free to use any that you like. They just need to implment a `debug` few method. Many loggers out there support 'debug', 'info', 'trace', 'error', 'warn', etc so this should be pretty standard.
+
+To use a custom logger you could do this using the following code.
+
+```
+var bridgetownApi = require('../lib/bridgetown-api'),
+    //Chose solid logger as our custom logger.
+    logger = require('solid-logger-js').init({
+       adapters: [{
+           type: "console",
+           application: 'grasshopper-api',
+           machine: 'dev-server'
+       }]
+    });
+
+bridgetownApi.configure(function(){
+    this.debug = true;
+    this.useLogger(logger);
+});
+```
+
+That's it. Should use the logger that you pass in instead of the default. This is beneficial so that you can write to the console, file, database or whatever your module supports.
+
+
+## Running Tests
+
+Fork git repo, then:
+
+* npm install
+* npm install -g grunt-cli
+* npm install -g mocha
+
+`grunt test` runs the tests.
+
+
+## Contributors (`git shortlog -s -n`)
+
+[https://github.com/Solid-Interactive/bridgetown-api-js/graphs/contributors](https://github.com/Solid-Interactive/bridgetown-api-js/graphs/contributors)
+
+## License
+
+(The MIT License)
+
+Copyright (c) 2013 Solid Interactive - Travis McHattie
+
+Permission is hereby granted, free of charge, to any person obtaining a copy
+of this software and associated documentation files (the "Software"), to deal
+in the Software without restriction, including without limitation the rights
+to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+copies of the Software, and to permit persons to whom the Software is
+furnished to do so, subject to the following conditions:
+
+The above copyright notice and this permission notice shall be included in
+all copies or substantial portions of the Software.
+
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
+THE SOFTWARE.
