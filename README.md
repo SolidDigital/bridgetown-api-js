@@ -2,6 +2,8 @@
 
 --------------------------------------------------------------------------------------------------------------
 
+Current Build: v.0.0.3-alpha [![Build Status](https://travis-ci.org/Solid-Interactive/bridgetown-api-js.png?branch=master)](https://travis-ci.org/Solid-Interactive/bridgetown-api-js)
+
 Anytime you build applications for the modern web, at some point you will have to build an API. APIs power all of our single page web apps, mobile and entertainment applications as well as integrating systems together on the server side.
 
 Every time you build an API the same problems have to be solved.
