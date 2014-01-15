@@ -134,8 +134,7 @@ HTTP Status 200
 
 ```
 {
-    status: "success",
-    data: [json data]
+    ...your data...
 }
 ```
 
