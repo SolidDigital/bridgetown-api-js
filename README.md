@@ -22,7 +22,7 @@ This library is most useful when using the built in Middleware objects and takin
 
 
 ```
-var middleware = require('../lib/bridgetown-api').middleware;
+var middleware = require('bridgetown-api').middleware;
 
 app.get('/resource', [middleware.authorization, routes.resource.get]);
 ```
@@ -44,7 +44,7 @@ If your API requires an API Key to allow access then you can use this middleware
 
 
 ```
-var bridgetownApi = require('../lib/bridgetown-api'),
+var bridgetownApi = require('bridgetown-api'),
     middleware = bridgetownApi.middleware,
     q = require('q');
 
@@ -69,7 +69,7 @@ app.get('/resource', [middleware.apiKey, routes.resource.get]);
 If your API requires authentication then you should be using the authorization middleware. This middleware ensures that the `authorization` header is supplied. If it is not then a failed response will be returned.
 
 ```
-var bridgetownApi = require('../lib/bridgetown-api'),
+var bridgetownApi = require('bridgetown-api'),
     middleware = bridgetownApi.middleware;
 
 app.get('/resource', [middleware.authorization, routes.resource.get]);
@@ -81,7 +81,7 @@ app.get('/resource', [middleware.authorization, routes.resource.get]);
 The auth token middleware would typically be paired up with the authorization middleware. You would supply a validation method to the library and if the token is valid the next middleware would be called, if not then an error would get sent back.
 
 ```
-var bridgetownApi = require('../lib/bridgetown-api'),
+var bridgetownApi = require('bridgetown-api'),
     middleware = bridgetownApi.middleware,
     q = require('q');
 
@@ -108,7 +108,7 @@ The really great thing about these middlewares is that they can be used to creat
 
 
 ```
-var bridgetownApi = require('../lib/bridgetown-api'),
+var bridgetownApi = require('bridgetown-api'),
     middleware = bridgetownApi.middleware;
 
 app.get('/resource', [middleware.apiKey, middleware.authorization, middleware.authToken, routes.resource.get]);
@@ -169,7 +169,7 @@ This logger is purposefully very simple, there are a ton of really good loggers 
 To use a custom logger you could do this using the following code.
 
 ```
-var bridgetownApi = require('../lib/bridgetown-api'),
+var bridgetownApi = require('bridgetown-api'),
     //Chose solid logger as our custom logger.
     logger = require('solid-logger-js').init({
        adapters: [{
