@@ -126,7 +126,16 @@ Validation methods are injected in the `.configure()` function call. There are n
 
 API responses can be pure insanity, there is no one standard and it seems that everyone does it differently. Since there is no right answer on how to handle responses, the most important thing is to be consistent. If you build lots of apps you want to come up with a response structure that you can use every time.
 
-The structure that we use is:
+
+To return a response you will send the bridgetown Response module your HttpResponse object and use it's `write` method.
+
+```
+var Response = require('bridgetown-api').Response,
+    response = new Response(httpResponse);
+
+response.write(code, message);
+```
+
 
 * On Success
 
@@ -148,6 +157,26 @@ HTTP Status <Error Code>
     status: "error",
     message: "Useful Error Message"
 }
+```
+
+There are many ways to write out various default errors.
+
+```
+var err = new Error({Your error message});
+err.errorCode = Response.statusCodes.{appropriate code};
+response.writeError(err);
+```
+
+Or any of these
+
+```
+response.writeUnauthorized();
+response.writeForbidden();
+response.writeNotFound();
+response.writeTimeout();
+response.writeBadRequest();
+response.writeServerError();
+response.writeServiceUnavailable();
 ```
 
 ## Logging
