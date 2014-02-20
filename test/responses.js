@@ -93,4 +93,17 @@ describe('Test common responses', function(){
 
         response.writeTimeout();
     });
+
+    it('should use code and errorCode interchangably.', function(done) {
+        var response = new Response(mockResponse),
+            error = new Error('Unauthorized'),
+            unhook = hook.setup(function(string){
+                unhook();
+                string.should.contain('[DEBUG]  401 - {"code":401,"status":"error","message":"Unauthorized"}');
+                done();
+            });
+
+        error.code = 401;
+        response.writeError(error);
+    });
 });
