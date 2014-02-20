@@ -97,7 +97,7 @@ bridgetownApi.configure(function(){
     this.validate.token(validateToken);
 });
 
-app.get('/resource', [middleware.apiKey, routes.resource.get]);
+app.get('/resource', [middleware.authToken, routes.resource.get]);
 
 ```
 
