@@ -3,6 +3,7 @@ var http = require('http'),
     middleware = bridgetownApi.middleware;
 
 require('chai').should();
+
 describe('Authorization Validation', function(){
     'use strict';
 
@@ -54,13 +55,80 @@ describe('Authorization Validation', function(){
             request = http.request(options, function(res){
                 res.setEncoding('utf8');
                 res.on('data', function () {
-                    'Should not have passed'.should.equal('Authorization header was supplied, should not have failed.');
+                    console.log(res.body);
+                    'Should not have passed'.should.equal('Authorization header was supplied, should not have failed.'); //jshint ignore:line
                     done();
                 });
             }),
 
             server = http.createServer(function (req, res) {
                 middleware.authorization(req, res, function(){
+                    server.close();
+                    done();
+                });
+            });
+
+        server.listen(port);
+
+        request.end();
+    });
+
+    it('should return an object representing the authorization method supplied.', function(done) {
+        var options = {
+                host: 'localhost',
+                port: port,
+                path: '/',
+                method: 'GET',
+                headers: {
+                    authorization: 'Basic QWxhZGRpbjpvcGVuIHNlc2FtZQ=='
+                }
+            },
+            request = http.request(options, function(res){
+                res.setEncoding('utf8');
+                res.on('data', function () {
+                    true.should.equal(false);
+
+                    done();
+                });
+            }),
+
+            server = http.createServer(function (req, res) {
+                middleware.authorization(req, res, function(){
+                    req.bridgetown.method.should.equal('Basic');
+                    req.bridgetown.token.should.equal('Aladdin:open sesame');
+                    server.close();
+                    done();
+                });
+            });
+
+        server.listen(port);
+
+        request.end();
+    });
+
+    it('should return an Google as the authentication method when given google in the token.', function(done) {
+        var options = {
+                host: 'localhost',
+                port: port,
+                path: '/',
+                method: 'GET',
+                headers: {
+                    authorization: 'Google QWxhZGRpbjpvcGVuIHNlc2FtZQ=='
+                }
+            },
+            request = http.request(options, function(res){
+                res.setEncoding('utf8');
+                res.on('data', function () {
+                    true.should.equal(false);
+
+                    done();
+                });
+            }),
+
+            server = http.createServer(function (req, res) {
+                middleware.authorization(req, res, function(){
+                    req.bridgetown.method.should.equal('Google');
+                    req.bridgetown.token.should.equal('Aladdin:open sesame');
                     server.close();
                     done();
                 });
