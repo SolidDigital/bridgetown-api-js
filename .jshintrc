@@ -2,6 +2,9 @@
     "node" : true,
     "globals": {
         "beforeEach": false,
+        "afterEach": false,
+        "before": false,
+        "after": false,
         "define": false,
         "describe": false,
         "it": false,
