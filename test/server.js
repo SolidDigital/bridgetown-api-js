@@ -22,6 +22,7 @@ function start(onReadyFunction) {
 }
 function stop() {
     if(server) {
+        console.log('Stopped listening to port: ' +PORT);
         server.close();
         server = undefined;
     }
