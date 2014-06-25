@@ -2,7 +2,7 @@
 
 --------------------------------------------------------------------------------------------------------------
 
-[![Build Status](https://travis-ci.org/Solid-Interactive/bridgetown-api-js.png?branch=master)](https://travis-ci.org/Solid-Interactive/bridgetown-api-js)  - v.0.0.3-alpha
+[![Build Status](https://travis-ci.org/Solid-Interactive/bridgetown-api-js.png?branch=master)](https://travis-ci.org/Solid-Interactive/bridgetown-api-js)  - v.1.0.0
 
 Anytime you build applications for the modern web, at some point you will have to build an API. APIs power all of our single page web apps, mobile and entertainment applications as well as integrating systems together on the server side.
 
@@ -16,7 +16,7 @@ Every time you build an API the same problems have to be solved.
 
 Some of these problems are going to be different for every project but some of them are the same every time. This project is designed to apply the patterns required to facilitate building an API covering the above concepts.
 
-This project does not have any dependecies and can be used with NodeJS's basic HttpRequest/Response objects but typically we would pair this with [https://github.com/visionmedia/express](Express).
+This project does not have any dependencies and can be used with NodeJS's basic HttpRequest/Response objects but typically we would pair this with [https://github.com/visionmedia/express](Express).
 
 This library is most useful when using the built in Middleware objects and taking advantage of Express' ability to chain middle ware for a route. Here is a route example:
 
@@ -33,7 +33,7 @@ The above code will check to see if there is an authentication header available.
 
 ## Middleware
 
-There is a collection of usefull middleware that you can use to protect your routes. Here is a typical pattern to grant access to a domain resource.
+There is a collection of useful middleware that you can use to protect your routes. Here is a typical pattern to grant access to a domain resource.
 
 ![Bridgetown API Domain Access](https://s3.amazonaws.com/SolidInteractive/images/bridgetown/bridge-town-middleware.png)
 
