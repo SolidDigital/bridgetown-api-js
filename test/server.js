@@ -3,8 +3,7 @@
 var http = require('http'),
     PORT = 3210,
     server,
-    bridgetownApi = require('../lib/bridgetown-api'),
-    middleware = bridgetownApi.middleware;
+    bridgetownApi = require('../lib/bridgetown-api');
 
 module.exports = {
     start : start,
@@ -12,18 +11,13 @@ module.exports = {
     configure : configure
 };
 
-
-function start() {
+function start(onReadyFunction) {
     if(server) {
         return;
     }
 
     console.log('Starting to listen to port: ' +PORT);
-    server = http.createServer(function (req, res) {
-        middleware.apiKey(req, res, function(){
-            throw new Error();
-        });
-    });
+    server = http.createServer(onReadyFunction);
     server.listen(PORT);
 }
 function stop() {
