@@ -1,13 +1,19 @@
-var http = require('http'),
-    bridgetownApi = require('../lib/bridgetown-api'),
-    middleware = bridgetownApi.middleware,
+var server = require('./server'),
     q = require('q');
 
 require('chai').should();
 describe('API-KEY Validation', function(){
     'use strict';
 
-    var port = 3210;
+    var port = 3210,
+        bridgetownApi = require('../lib/bridgetown-api'),
+        request = require('./request'),
+        middleware = bridgetownApi.middleware;
+
+    afterEach(function() {
+        server.stop();
+    });
+
 
     it('should receive a 403 because the api is trying to be used before registering an API-KEY precondition.',
         function(done) {
@@ -19,31 +25,18 @@ describe('API-KEY Validation', function(){
                 headers: {
                     'X-API-KEY': '12345890'
                 }
-            },
-            req = http.request(options, function(res){
-                res.setEncoding('utf8');
-                res.on('data', function (chunk) {
-                    var response = JSON.parse(chunk);
+            };
 
-                    response.code.should.equal(403);
-                    response.message.should.equal('API key validation method not registered.');
-
-                    server.close();
-                    done();
-                });
-            }),
-
-            server = http.createServer(function (req, res) {
-                middleware.apiKey(req, res, function(){
-                    // This should not happen.
-                    'Should not have passed'.should.equal('This was an invalid API Key');
-                    done();
-                });
+        server.start( function(req, res) {
+            middleware.apiKey(req, res, function(){
+                throw new Error();
             });
+        } );
 
-        server.listen(port);
-
-        req.end();
+        request(options).then(function(response){
+            response.code.should.equal(403);
+            response.message.should.equal('API key validation method not registered.');
+        }).done(done);
     });
 
     it('should successfully create a server and validate an API key using the precondition function.', function(done) {
@@ -55,33 +48,30 @@ describe('API-KEY Validation', function(){
                 headers: {
                     'X-API-KEY': '1234567890'
                 }
-            },
-            req = http.request(options),
-
-            server = http.createServer(function (req, res) {
-                middleware.apiKey(req, res, function(){
-                    // If we get here then success
-                    server.close();
-                    done();
-                });
-            });
-
-        server.listen(port);
+            };
 
         function validateApiKey(apiKey){
             var deferred = q.defer();
 
             apiKey.should.equal('1234567890');
-
             deferred.resolve(true);
             return deferred.promise;
         }
 
-        bridgetownApi.configure(function(){
+        server.start( function(req, res) {
+            middleware.apiKey(req, res, function(){
+                done();
+            });
+        } );
+
+        server.configure(function(){
             this.validate.apiKey(validateApiKey);
         });
 
-        req.end();
+        request(options).then(function(){
+            //Test ends before getting here
+            true.should.equal(false);
+        }).done();
     });
 
     it('should receive a 403 error because the API validation routine returned a failed promise.', function(done) {
@@ -93,26 +83,7 @@ describe('API-KEY Validation', function(){
                 headers: {
                     'X-API-KEY': '12345890'
                 }
-            },
-            req = http.request(options, function(res){
-                res.setEncoding('utf8');
-                res.on('data', function (chunk) {
-                    var response = JSON.parse(chunk);
-                    response.message.should.equal('API Keys are invalid');
-                    server.close();
-                    done();
-                });
-            }),
-
-            server = http.createServer(function (req, res) {
-                middleware.apiKey(req, res, function(){
-                    // This should not happen.
-                    'Should not have passed'.should.equal('This was an invalid API Key');
-                    done();
-                });
-            });
-
-        server.listen(port);
+            };
 
         function validateApiKey(apiKey){
             var deferred = q.defer(),
@@ -126,10 +97,18 @@ describe('API-KEY Validation', function(){
             return deferred.promise;
         }
 
-        bridgetownApi.configure(function(){
+        server.configure(function(){
             this.validate.apiKey(validateApiKey);
         });
 
-        req.end();
+        server.start( function(req, res) {
+            middleware.apiKey(req, res, function(){
+                throw new Error();
+            });
+        } );
+
+        request(options).then(function(response){
+            response.message.should.equal('API Keys are invalid');
+        }).done(done);
     });
 });

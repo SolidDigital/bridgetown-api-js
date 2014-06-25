@@ -1,5 +1,4 @@
-var bridgetownApi = require('../lib/bridgetown-api'),
-    hook = require('./dependencies/hook_stdout'),
+var hook = require('./dependencies/hook_stdout'),
     Response = require('../lib/Response');
 
 require('chai').should();
@@ -7,10 +6,7 @@ require('chai').should();
 describe('Test common responses', function(){
     'use strict';
 
-    var logger = {
-            name: 'test'
-        },
-        mockResponse = {
+    var mockResponse = {
             writeHead: function(){},
             write: function(){},
             end: function(){}
