@@ -1,5 +1,4 @@
-var http = require('http'),
-    server = require('./server'),
+var server = require('./server'),
     q = require('q');
 
 require('chai').should();
@@ -10,10 +9,6 @@ describe('API-KEY Validation', function(){
         bridgetownApi = require('../lib/bridgetown-api'),
         request = require('./request'),
         middleware = bridgetownApi.middleware;
-
-    beforeEach(function() {
-        //server.start();
-    });
 
     afterEach(function() {
         server.stop();
