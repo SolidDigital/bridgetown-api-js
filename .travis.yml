@@ -1,4 +1,7 @@
 language: node_js
 node_js:
-  - "0.11"
-  - "0.10"
+- '0.11'
+- '0.10'
+env:
+  global:
+    secure: kqu+rKnaZlpk514oJSh1fbQIIj8+EWDZipXiTJgVLDO7zrU3w+ud8kkRopU3tzN+twQGBxxY93f9DLVQForO/JaO7wHDVoB6Nm5U6Q+vAcGZ359U7hWeXrW/VwJXqdyFYvTufWCTfABWZJTYmV0d8sIMJ3VBVXmb+jSCqsKyMM4=
