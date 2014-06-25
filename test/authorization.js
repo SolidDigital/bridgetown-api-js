@@ -130,53 +130,27 @@ describe('Authorization Validation', function(){
         }).done();
     });
 
-    xit('should fail when token cannot be split into method and token.', function(done) {
+    it('Should have a default method of Basic, when only a token is passed.', function(done) {
         var options = {
                 host: 'localhost',
                 port: port,
                 path: '/',
                 method: 'GET',
                 headers: {
-                    authorization: 'GoogleQWxhZGRpbjpvcGVuIHNlc2FtZQ=='
-                }
-            };
-
-        server.start(function (req, res) {
-            middleware.authorization(req, res, function(){
-                console.log('this guys'); // Should not be called
-                done();
-            });
-        });
-
-        request(options).then(function(response) {
-            console.log('THIS GUY');
-            console.log(response);
-            done();
-        }).done();
-    });
-
-    xit('should fail when token and method are the same thing (no method or token provided).', function(done) {
-        var options = {
-                host: 'localhost',
-                port: port,
-                path: '/',
-                method: 'GET',
-                headers: {
-                    authorization: 'Google Google'
+                    authorization: 'QWxhZGRpbjpvcGVuIHNlc2FtZQ=='
                 }
             };
 
         server.start(function(req, res) {
             middleware.authorization(req, res, function() {
-                true.should.equal(false); // it should not get here.
+                req.bridgetown.method.should.equal('Basic');
                 done();
             });
         });
 
-        request(options).then(function(response) {
+        request(options).then(function() {
             true.should.equal(false);
-            console.log(response);
-        }).done(done);
+        }).done();
 
     });
 

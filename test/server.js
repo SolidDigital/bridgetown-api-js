@@ -16,9 +16,14 @@ function start(onReadyFunction) {
         return;
     }
 
-    console.log('Starting to listen to port: ' +PORT);
     server = http.createServer(onReadyFunction);
-    server.listen(PORT);
+    server.listen(PORT, function(err) {
+        if(err) {
+            console.log(err);
+        }
+
+        console.log('Starting to listen to port: ' +PORT);
+    });
 }
 function stop() {
     if(server) {

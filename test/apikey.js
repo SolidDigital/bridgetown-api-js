@@ -15,8 +15,7 @@ describe('API-KEY Validation', function(){
     });
 
 
-    it('should receive a 403 because the api is trying to be used before registering an API-KEY precondition.',
-        function(done) {
+    it('should receive a 403 because the api is trying to be used before registering an API-KEY precondition.', function(done) { //jshint ignore:line
         var options = {
                 host: 'localhost',
                 port: port,
