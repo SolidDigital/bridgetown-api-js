@@ -1,239 +1,183 @@
-//var http = require('http'),
-//    bridgetownApi = require('../lib/bridgetown-api'),
-//    middleware = bridgetownApi.middleware;
+var server = require('./server'),
+    bridgetownApi = require('../lib/bridgetown-api'),
+    middleware = bridgetownApi.middleware;
 
 require('chai').should();
 
 describe('Authorization Validation', function(){
     'use strict';
 
-//    var port = 3210;
+    var port = 3210,
+        request = require('./request');
 
-//    it('should receive a 401 Because the authorization header is not provided.', function(done) {
-//        var options = {
-//                host: 'localhost',
-//                port: port,
-//                path: '/',
-//                method: 'GET'
-//            },
-//            request = http.request(options, function(res){
-//                res.setEncoding('utf8');
-//                res.on('data', function (chunk) {
-//                    var response = JSON.parse(chunk);
-//
-//                    response.code.should.equal(401);
-//                    response.message.should.equal('Authorization credentials not provided.');
-//
-//                    server.close();
-//                    done();
-//                });
-//            }),
-//
-//            server = http.createServer(function (req, res) {
-//                middleware.authorization(req, res, function(){
-//                    // This should not happen.
-//                    'Should not have passed'.should.equal('No authorization header was supplied.');
-//                    done();
-//                });
-//            });
-//
-//        server.listen(port);
-//
-//        request.end();
-//    });
+    afterEach(function() {
+        server.stop();
+    });
 
-//    it('should have it\'s callback called successfully because the authorization header is present.', function(done) {
-//        var options = {
-//                host: 'localhost',
-//                port: port,
-//                path: '/',
-//                method: 'GET',
-//                headers: {
-//                    authorization: 'Token QWxhZGRpbjpvcGVuIHNlc2FtZQ=='
-//                }
-//            },
-//            request = http.request(options, function(res){
-//                res.setEncoding('utf8');
-//                res.on('data', function () {
-//                    console.log(res.body);
-//                    'Should not have passed'.should.equal('Authorization header was supplied,
-// should not have failed.'); //jshint ignore:line
-//                    done();
-//                });
-//            }),
-//
-//            server = http.createServer(function (req, res) {
-//                middleware.authorization(req, res, function(){
-//                    server.close();
-//                    done();
-//                });
-//            });
-//
-//        server.listen(port);
-//
-//        request.end();
-//    });
+    it('should receive a 401 Because the authorization header is not provided.', function(done) {
+        var options = {
+                host: 'localhost',
+                port: port,
+                path: '/',
+                method: 'GET'
+            };
 
-//    it('should return an object representing the authorization method supplied.', function(done) {
-//        var options = {
-//                host: 'localhost',
-//                port: port,
-//                path: '/',
-//                method: 'GET',
-//                headers: {
-//                    authorization: 'Basic QWxhZGRpbjpvcGVuIHNlc2FtZQ=='
-//                }
-//            },
-//            request = http.request(options, function(res){
-//                res.setEncoding('utf8');
-//                res.on('data', function () {
-//                    true.should.equal(false);
-//
-//                    done();
-//                });
-//            }),
-//
-//            server = http.createServer(function (req, res) {
-//                middleware.authorization(req, res, function(){
-//                    req.bridgetown.method.should.equal('Basic');
-//                    req.bridgetown.token.should.equal('Aladdin:open sesame');
-//                    server.close();
-//                    done();
-//                });
-//            });
-//
-//        server.listen(port);
-//
-//        request.end();
-//    });
+        server.start(function(req, res) {
+            middleware.authorization(req, res, function() {
+                true.should.equal(false); // It should not get here.
+            });
+        });
 
-//    it('should return an Google as the authentication method when given google in the token.', function(done) {
-//        var options = {
-//                host: 'localhost',
-//                port: port,
-//                path: '/',
-//                method: 'GET',
-//                headers: {
-//                    authorization: 'Google QWxhZGRpbjpvcGVuIHNlc2FtZQ=='
-//                }
-//            },
-//            request = http.request(options, function(res){
-//                res.setEncoding('utf8');
-//                res.on('data', function () {
-//                    true.should.equal(false);
-//
-//                    done();
-//                });
-//            }),
-//
-//            server = http.createServer(function (req, res) {
-//                middleware.authorization(req, res, function(){
-//                    req.bridgetown.method.should.equal('Google');
-//                    req.bridgetown.token.should.equal('Aladdin:open sesame');
-//                    server.close();
-//                    done();
-//                });
-//            });
-//
-//        server.listen(port);
-//
-//        request.end();
-//    });
+        request(options).then(function(response) {
+            response.code.should.equal(401);
+            response.message.should.equal('Authorization credentials not provided.');
+        }).done(done);
+    });
 
-//    it('should return an Google as the authentication method when given google in the token and 2 spaces between',
-// function(done) { //jshint ignore:line
-//        var options = {
-//                host: 'localhost',
-//                port: port,
-//                path: '/',
-//                method: 'GET',
-//                headers: {
-//                    authorization: 'Google  QWxhZGRpbjpvcGVuIHNlc2FtZQ=='
-//                }
-//            },
-//            request = http.request(options, function(res){
-//                res.setEncoding('utf8');
-//                res.on('data', function () {
-//                    true.should.equal(false);
-//
-//                    done();
-//                });
-//            }),
-//
-//            server = http.createServer(function (req, res) {
-//                middleware.authorization(req, res, function(){
-//                    req.bridgetown.method.should.equal('Google');
-//                    req.bridgetown.token.should.equal('Aladdin:open sesame');
-//                    server.close();
-//                    done();
-//                });
-//            });
-//
-//        server.listen(port);
-//
-//        request.end();
-//    });
+    it('should have it\'s callback called successfully because the authorization header is present.', function(done) {
+        var options = {
+                host: 'localhost',
+                port: port,
+                path: '/',
+                method: 'GET',
+                headers: {
+                    authorization: 'Token QWxhZGRpbjpvcGVuIHNlc2FtZQ=='
+                }
+            };
 
-//    it('should fail when token cannot be split into method and token.', function(done) {
-//        var options = {
-//                host: 'localhost',
-//                port: port,
-//                path: '/',
-//                method: 'GET',
-//                headers: {
-//                    authorization: 'GoogleQWxhZGRpbjpvcGVuIHNlc2FtZQ=='
-//                }
-//            },
-//            request = http.request(options, function(res){
-//                res.setEncoding('utf8');
-//                res.on('data', function () {
-//                    true.should.equal(true); // it should get here
-//                    done();
-//                });
-//            }),
-//
-//            server = http.createServer(function (req, res) {
-//                middleware.authorization(req, res, function(){
-//                    true.should.equal(false); // it should not get here
-//                    server.close();
-//                    done();
-//                });
-//            });
-//
-//        server.listen(port);
-//
-//        request.end();
-//    });
+        server.start(function(req, res) {
+            middleware.authorization(req, res, function() {
+                // If it gets here then we are good.
+                done();
+            });
+        });
 
-//    it('should fail when token and method are the same thing (no method or token provided).', function(done) {
-//        var options = {
-//                host: 'localhost',
-//                port: port,
-//                path: '/',
-//                method: 'GET',
-//                headers: {
-//                    authorization: 'Google Google'
-//                }
-//            },
-//            request = http.request(options, function(res){
-//                res.setEncoding('utf8');
-//                res.on('data', function () {
-//                    res.body.errorCode.should.equal(401);
-//                    done();
-//                });
-//            }),
-//
-//            server = http.createServer(function (req, res) {
-//                middleware.authorization(req, res, function(){
-//                    true.should.equal(false); // it should not get here.
-//                    server.close();
-//                    done();
-//                });
-//            });
-//
-//        server.listen(port);
-//
-//        request.end();
-//    });
+        request(options).then(function(response) {
+            response.body.status.should.equal(200);
+        }).done();
+
+    });
+
+    it('should return an object representing the authorization method supplied.', function(done) {
+        var options = {
+                host: 'localhost',
+                port: port,
+                path: '/',
+                method: 'GET',
+                headers: {
+                    authorization: 'Basic QWxhZGRpbjpvcGVuIHNlc2FtZQ=='
+                }
+            };
+
+        server.start(function(req, res) {
+            middleware.authorization(req, res, function() {
+                req.bridgetown.method.should.equal('Basic');
+                req.bridgetown.token.should.equal('Aladdin:open sesame');
+                done();
+            });
+        });
+
+        request(options).then(function(response) {
+            response.body.status.should.equal(200);
+        }).done();
+    });
+
+    it('should return an Google as the authentication method when given google in the token.', function(done) {
+        var options = {
+                host: 'localhost',
+                port: port,
+                path: '/',
+                method: 'GET',
+                headers: {
+                    authorization: 'Google QWxhZGRpbjpvcGVuIHNlc2FtZQ=='
+                }
+            };
+
+        server.start(function(req, res) {
+            middleware.authorization(req, res, function(){
+                req.bridgetown.method.should.equal('Google');
+                req.bridgetown.token.should.equal('Aladdin:open sesame');
+                done();
+            });
+        });
+
+        request(options).then(function(response) {
+            response.body.status.should.equal(200);
+        }).done();
+    });
+
+    it('should return an Google as the authentication method when given google in the token and 2 spaces between', function(done) { //jshint ignore:line
+        var options = {
+                host: 'localhost',
+                port: port,
+                path: '/',
+                method: 'GET',
+                headers: {
+                    authorization: 'Google  QWxhZGRpbjpvcGVuIHNlc2FtZQ=='
+                }
+            };
+
+        server.start(function (req, res) {
+            middleware.authorization(req, res, function() {
+                req.bridgetown.method.should.equal('Google');
+                req.bridgetown.token.should.equal('Aladdin:open sesame');
+                done();
+            });
+        });
+
+        request(options).then(function(response) {
+            response.body.status.should.equal(200);
+        }).done();
+    });
+
+    xit('should fail when token cannot be split into method and token.', function(done) {
+        var options = {
+                host: 'localhost',
+                port: port,
+                path: '/',
+                method: 'GET',
+                headers: {
+                    authorization: 'GoogleQWxhZGRpbjpvcGVuIHNlc2FtZQ=='
+                }
+            };
+
+        server.start(function (req, res) {
+            middleware.authorization(req, res, function(){
+                console.log('this guys'); // Should not be called
+                done();
+            });
+        });
+
+        request(options).then(function(response) {
+            console.log('THIS GUY');
+            console.log(response);
+            done();
+        }).done();
+    });
+
+    xit('should fail when token and method are the same thing (no method or token provided).', function(done) {
+        var options = {
+                host: 'localhost',
+                port: port,
+                path: '/',
+                method: 'GET',
+                headers: {
+                    authorization: 'Google Google'
+                }
+            };
+
+        server.start(function(req, res) {
+            middleware.authorization(req, res, function() {
+                true.should.equal(false); // it should not get here.
+                done();
+            });
+        });
+
+        request(options).then(function(response) {
+            true.should.equal(false);
+            console.log(response);
+        }).done(done);
+
+    });
 
 });
