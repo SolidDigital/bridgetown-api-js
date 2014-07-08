@@ -3,7 +3,7 @@
   "description": "Collection of middleware that can be used in combination with express to protect an API. There is also a common API Response module that can be used in all of your API projects.",
   "main": "./lib/bridgetown-api",
   "author": "Travis McHattie",
-  "version": "1.0.2",
+  "version": "1.0.3",
   "repository": {
     "type": "git",
     "url": "https://github.com/Solid-Interactive/bridgetown-api"
