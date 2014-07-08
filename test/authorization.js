@@ -1,5 +1,6 @@
 var server = require('./server'),
     bridgetownApi = require('../lib/bridgetown-api'),
+    Response = require('../lib/Response'),
     middleware = bridgetownApi.middleware;
 
 require('chai').should();
@@ -48,13 +49,14 @@ describe('Authorization Validation', function(){
         server.start(function(req, res) {
             middleware.authorization(req, res, function() {
                 // If it gets here then we are good.
-                done();
+                var response = new Response(res);
+                response.write(200, {success:true});
             });
         });
 
         request(options).then(function(response) {
-            response.body.status.should.equal(200);
-        }).done();
+            response.success.should.equal(true);
+        }).done(done);
 
     });
 
@@ -71,15 +73,16 @@ describe('Authorization Validation', function(){
 
         server.start(function(req, res) {
             middleware.authorization(req, res, function() {
+                var response = new Response(res);
                 req.bridgetown.method.should.equal('Basic');
                 req.bridgetown.token.should.equal('Aladdin:open sesame');
-                done();
+                response.write(200, {success:true});
             });
         });
 
         request(options).then(function(response) {
-            response.body.status.should.equal(200);
-        }).done();
+            response.success.should.equal(true);
+        }).done(done);
     });
 
     it('should return an Google as the authentication method when given google in the token.', function(done) {
@@ -95,15 +98,16 @@ describe('Authorization Validation', function(){
 
         server.start(function(req, res) {
             middleware.authorization(req, res, function(){
+                var response = new Response(res);
                 req.bridgetown.method.should.equal('Google');
                 req.bridgetown.token.should.equal('Aladdin:open sesame');
-                done();
+                response.write(200, {success:true});
             });
         });
 
         request(options).then(function(response) {
-            response.body.status.should.equal(200);
-        }).done();
+            response.success.should.equal(true);
+        }).done(done);
     });
 
     it('should return an Google as the authentication method when given google in the token and 2 spaces between', function(done) { //jshint ignore:line
@@ -119,15 +123,16 @@ describe('Authorization Validation', function(){
 
         server.start(function (req, res) {
             middleware.authorization(req, res, function() {
+                var response = new Response(res);
                 req.bridgetown.method.should.equal('Google');
                 req.bridgetown.token.should.equal('Aladdin:open sesame');
-                done();
+                response.write(200, {success:true});
             });
         });
 
         request(options).then(function(response) {
-            response.body.status.should.equal(200);
-        }).done();
+            response.success.should.equal(true);
+        }).done(done);
     });
 
     it('Should have a default method of Basic, when only a token is passed.', function(done) {
@@ -141,16 +146,18 @@ describe('Authorization Validation', function(){
                 }
             };
 
+        server.stop();
         server.start(function(req, res) {
             middleware.authorization(req, res, function() {
+                var response = new Response(res);
                 req.bridgetown.method.should.equal('Basic');
-                done();
+                response.write(200,{success:true});
             });
+        }).then(function(){
+            request(options).then(function(response) {
+                response.success.should.equal(true);
+            }).done(done);
         });
-
-        request(options).then(function() {
-            true.should.equal(false);
-        }).done();
 
     });
 

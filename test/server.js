@@ -3,7 +3,8 @@
 var http = require('http'),
     PORT = 3210,
     server,
-    bridgetownApi = require('../lib/bridgetown-api');
+    bridgetownApi = require('../lib/bridgetown-api'),
+    q = require('q');
 
 module.exports = {
     start : start,
@@ -12,7 +13,10 @@ module.exports = {
 };
 
 function start(onReadyFunction) {
+    var deferred = q.defer();
+
     if(server) {
+        deferred.reject('Server already running');
         return;
     }
 
@@ -23,7 +27,10 @@ function start(onReadyFunction) {
         }
 
         console.log('Starting to listen to port: ' +PORT);
+        deferred.resolve();
     });
+
+    return deferred.promise;
 }
 function stop() {
     if(server) {

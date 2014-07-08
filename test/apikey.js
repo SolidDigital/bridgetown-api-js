@@ -8,6 +8,7 @@ describe('API-KEY Validation', function(){
     var port = 3210,
         bridgetownApi = require('../lib/bridgetown-api'),
         request = require('./request'),
+        Response = require('../lib/Response'),
         middleware = bridgetownApi.middleware;
 
     afterEach(function() {
@@ -59,7 +60,8 @@ describe('API-KEY Validation', function(){
 
         server.start( function(req, res) {
             middleware.apiKey(req, res, function(){
-                done();
+                var response = new Response(res);
+                response.write(200, {success: true});
             });
         } );
 
@@ -67,10 +69,9 @@ describe('API-KEY Validation', function(){
             this.validate.apiKey(validateApiKey);
         });
 
-        request(options).then(function(){
-            //Test ends before getting here
-            true.should.equal(false);
-        }).done();
+        request(options).then(function(response){
+            response.success.should.equal(true);
+        }).done(done);
     });
 
     it('should receive a 403 error because the API validation routine returned a failed promise.', function(done) {
