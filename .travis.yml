@@ -2,5 +2,3 @@ language: node_js
 node_js:
 - '0.11'
 - '0.10'
-hipchat:
-  secure: LSMUWQ1vcp0ZIql/0PLjT/R7GZGKDf5c9tphHMENJD/XtU6hKZ9+9LEP0m4n4TA+ZProU/muTNFQsY7p5zIMOIFl6DtDqUD0g5K+i9l7m7cmX6YwX1XlAGMRglO/ITgvVcv7aIbR2diY4fERRjwAFB+kzk/XRzQIX6gbpLBkUUw=
