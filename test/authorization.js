@@ -54,9 +54,12 @@ describe('Authorization Validation', function(){
             });
         });
 
-        request(options).then(function(response) {
-            response.success.should.equal(true);
-        }).done(done);
+        request(options)
+            .then(function(response) {
+                response.success.should.equal(true);
+                done();
+            })
+            .catch(done);
 
     });
 
@@ -80,9 +83,12 @@ describe('Authorization Validation', function(){
             });
         });
 
-        request(options).then(function(response) {
-            response.success.should.equal(true);
-        }).done(done);
+        request(options)
+            .then(function(response) {
+                response.success.should.equal(true);
+                done();
+            })
+            .catch(done);
     });
 
     it('should return an Google as the authentication method when given google in the token.', function(done) {
@@ -105,9 +111,12 @@ describe('Authorization Validation', function(){
             });
         });
 
-        request(options).then(function(response) {
-            response.success.should.equal(true);
-        }).done(done);
+        request(options)
+            .then(function(response) {
+                response.success.should.equal(true);
+                done();
+            })
+            .catch(done);
     });
 
     it('should return an Google as the authentication method when given google in the token and 2 spaces between', function(done) { //jshint ignore:line
@@ -130,9 +139,12 @@ describe('Authorization Validation', function(){
             });
         });
 
-        request(options).then(function(response) {
-            response.success.should.equal(true);
-        }).done(done);
+        request(options)
+            .then(function(response) {
+                response.success.should.equal(true);
+                done();
+            })
+            .catch(done);
     });
 
     it('Should have a default method of Basic, when only a token is passed.', function(done) {
@@ -154,9 +166,12 @@ describe('Authorization Validation', function(){
                 response.write(200,{success:true});
             });
         }).then(function(){
-            request(options).then(function(response) {
-                response.success.should.equal(true);
-            }).done(done);
+            request(options)
+                .then(function(response) {
+                    response.success.should.equal(true);
+                    done();
+                })
+                .catch(done);
         });
 
     });
