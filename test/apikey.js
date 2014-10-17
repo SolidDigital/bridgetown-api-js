@@ -33,10 +33,13 @@ describe('API-KEY Validation', function(){
             });
         } );
 
-        request(options).then(function(response){
-            response.code.should.equal(403);
-            response.message.should.equal('API key validation method not registered.');
-        }).done(done);
+        request(options)
+            .then(function(response){
+                response.code.should.equal(403);
+                response.message.should.equal('API key validation method not registered.');
+                done();
+            })
+            .catch(done);
     });
 
     it('should successfully create a server and validate an API key using the precondition function.', function(done) {
@@ -69,9 +72,12 @@ describe('API-KEY Validation', function(){
             this.validate.apiKey(validateApiKey);
         });
 
-        request(options).then(function(response){
-            response.success.should.equal(true);
-        }).done(done);
+        request(options)
+            .then(function(response){
+                response.success.should.equal(true);
+                done();
+            })
+            .catch(done);
     });
 
     it('should receive a 403 error because the API validation routine returned a failed promise.', function(done) {
@@ -107,8 +113,11 @@ describe('API-KEY Validation', function(){
             });
         } );
 
-        request(options).then(function(response){
-            response.message.should.equal('API Keys are invalid');
-        }).done(done);
+        request(options)
+            .then(function(response){
+                response.message.should.equal('API Keys are invalid');
+                done();
+            })
+            .catch(done);
     });
 });

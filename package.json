@@ -17,14 +17,15 @@
   },
   "dependencies": {},
   "devDependencies": {
+    "chai": "~1.8.1",
+    "express": "^4.9.7",
+    "grunt": "~0.4.2",
+    "grunt-contrib-jshint": "~0.8.0",
+    "grunt-shell": "~0.2.2",
     "matchdep": "~0.3.0",
     "mocha": "~1.16.2",
-    "chai": "~1.8.1",
-    "supertest": "~0.8.2",
-    "grunt": "~0.4.2",
     "q": "~0.9.7",
-    "grunt-contrib-jshint": "~0.8.0",
-    "grunt-shell": "~0.2.2"
+    "supertest": "~0.8.2"
   },
   "scripts": {
     "test": "mocha --reporter spec"
