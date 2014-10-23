@@ -2,7 +2,7 @@ var server = require('./server'),
     q = require('q');
 
 require('chai').should();
-describe('API-KEY Validation', function(){
+xdescribe('API-KEY Validation', function(){
     'use strict';
 
     var port = 3210,

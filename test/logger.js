@@ -4,7 +4,7 @@ var bridgetownApi = require('../lib/bridgetown-api'),
 
 require('chai').should();
 
-describe('Application Logger', function(){
+xdescribe('Application Logger', function(){
     'use strict';
 
     var logger = {

@@ -5,7 +5,7 @@ var server = require('./server'),
 
 require('chai').should();
 
-describe('Authorization Validation', function(){
+xdescribe('Authorization Validation', function(){
     'use strict';
 
     var port = 3210,
