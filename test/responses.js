@@ -3,7 +3,8 @@
 var chai = require('chai'),
     sinon = require('sinon'),
     sinonChai = require('sinon-chai'),
-    bridgetown = require('../lib/bridgetown-api');
+    bridgetown = require('../lib/bridgetown-api'),
+    q = require('q');
 
 chai.should();
 chai.use(sinonChai);
@@ -19,43 +20,6 @@ function getMockResponse() {
 }
 
 describe('Test common responses', function(){
-
-    it('writeUnauthorized should return unauthorized', function() {
-        var req = {},
-            res = getMockResponse(),
-            next = function() {
-                res.writeUnauthorized();
-
-                res.writeHead.should.have.been.calledWith(401, {'Content-Type': 'application/json'});
-                res.write.should.have.been.calledWith(JSON.stringify({
-                    code: 401,
-                    status: 'error',
-                    message: 'Unauthorized'
-                }));
-                res.end.should.have.been.calledOnce;
-            };
-
-        bridgetown.middleware.response(req, res, next);
-    });
-
-    it('writeNotFound should return 404', function() {
-        var req = {},
-            res = getMockResponse(),
-            next = function() {
-                res.writeNotFound();
-
-                res.writeHead.should.have.been.calledWith(404, {'Content-Type': 'application/json'});
-                res.write.should.have.been.calledWith(JSON.stringify({
-                    code: 404,
-                    status: 'error',
-                    message: 'Not Found'
-                }));
-                res.end.should.have.been.calledOnce;
-            };
-
-        bridgetown.middleware.response(req, res, next);
-    });
-
     it('writeBadRequest should return 400', function() {
         var req = {},
             res = getMockResponse(),
@@ -74,6 +38,27 @@ describe('Test common responses', function(){
         bridgetown.middleware.response(req, res, next);
     });
 
+    it('writeError should write custom error', function() {
+        var req = {},
+            res = getMockResponse(),
+            next = function() {
+                res.writeError({
+                    message : 'Too many turkeys',
+                    code : 411
+                });
+
+                res.writeHead.should.have.been.calledWith(411, {'Content-Type': 'application/json'});
+                res.write.should.have.been.calledWith(JSON.stringify({
+                    code: 411,
+                    status: 'error',
+                    message: 'Too many turkeys'
+                }));
+                res.end.should.have.been.calledOnce;
+            };
+
+        bridgetown.middleware.response(req, res, next);
+    });
+
     it('writeForbidden should return 403', function() {
         var req = {},
             res = getMockResponse(),
@@ -85,6 +70,77 @@ describe('Test common responses', function(){
                     code: 403,
                     status: 'error',
                     message: 'Forbidden'
+                }));
+                res.end.should.have.been.calledOnce;
+            };
+
+        bridgetown.middleware.response(req, res, next);
+    });
+
+    describe('writeFromPromise', function() {
+        it('when promise resolved should writeSuccess', function(done) {
+            var req = {},
+                res = getMockResponse(),
+                deferred = q.defer(),
+                promise = deferred.promise,
+                next = function() {
+                    res.writeFromPromise(promise);
+                    deferred.resolve({ name : 'Binary Harry' });
+
+                    // Promises are always async, so we have to wait a cycle before checking on things
+                    process.nextTick(function() {
+                        res.writeHead.should.have.been.calledWith(200, {'Content-Type': 'application/json'});
+                        res.write.should.have.been.calledWith(JSON.stringify({
+                            name : 'Binary Harry'
+                        }));
+                        res.end.should.have.been.calledOnce;
+                        done();
+                    });
+                };
+
+            bridgetown.middleware.response(req, res, next);
+        });
+
+        it('when promise is rejected should writeError', function(done) {
+            var req = {},
+                res = getMockResponse(),
+                deferred = q.defer(),
+                promise = deferred.promise,
+                next = function() {
+                    res.writeFromPromise(promise);
+                    deferred.reject({
+                        code : 808,
+                        message : 'We pau'
+                    });
+
+                    // Promises are always async, so we have to wait a cycle before checking on things
+                    process.nextTick(function() {
+                        res.writeHead.should.have.been.calledWith(808, {'Content-Type': 'application/json'});
+                        res.write.should.have.been.calledWith(JSON.stringify({
+                            code : 808,
+                            status : 'error',
+                            message : 'We pau'
+                        }));
+                        res.end.should.have.been.calledOnce;
+                        done();
+                    });
+                };
+
+            bridgetown.middleware.response(req, res, next);
+        });
+    });
+
+    it('writeNotFound should return 404', function() {
+        var req = {},
+            res = getMockResponse(),
+            next = function() {
+                res.writeNotFound();
+
+                res.writeHead.should.have.been.calledWith(404, {'Content-Type': 'application/json'});
+                res.write.should.have.been.calledWith(JSON.stringify({
+                    code: 404,
+                    status: 'error',
+                    message: 'Not Found'
                 }));
                 res.end.should.have.been.calledOnce;
             };
@@ -128,6 +184,24 @@ describe('Test common responses', function(){
         bridgetown.middleware.response(req, res, next);
     });
 
+    it('writeSuccess should return 200', function() {
+        var req = {},
+            res = getMockResponse(),
+            next = function() {
+                res.writeSuccess({
+                    object: '[Object]'
+                });
+
+                res.writeHead.should.have.been.calledWith(200, {'Content-Type': 'application/json'});
+                res.write.should.have.been.calledWith(JSON.stringify({
+                    object: '[Object]'
+                }));
+                res.end.should.have.been.calledOnce;
+            };
+
+        bridgetown.middleware.response(req, res, next);
+    });
+
     it('writeTimeout should return 408', function() {
         var req = {},
             res = getMockResponse(),
@@ -146,24 +220,22 @@ describe('Test common responses', function(){
         bridgetown.middleware.response(req, res, next);
     });
 
-    it('should write custom error with writeError', function() {
+    it('writeUnauthorized should return unauthorized', function() {
         var req = {},
             res = getMockResponse(),
             next = function() {
-                res.writeError({
-                    message : 'Too many turkeys',
-                    code : 411
-                });
+                res.writeUnauthorized();
 
-                res.writeHead.should.have.been.calledWith(411, {'Content-Type': 'application/json'});
+                res.writeHead.should.have.been.calledWith(401, {'Content-Type': 'application/json'});
                 res.write.should.have.been.calledWith(JSON.stringify({
-                    code: 411,
+                    code: 401,
                     status: 'error',
-                    message: 'Too many turkeys'
+                    message: 'Unauthorized'
                 }));
                 res.end.should.have.been.calledOnce;
             };
 
         bridgetown.middleware.response(req, res, next);
     });
+
 });
