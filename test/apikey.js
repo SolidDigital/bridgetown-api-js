@@ -1,18 +1,19 @@
-var q = require('q');
+'use strict';
+var chai = require('chai'),
+    sinon = require('sinon'),
+    sinonChai = require('sinon-chai'),
+    bridgetown = require('../lib/bridgetown-api'),
+    q = require('q');
 
-require('chai').should();
-xdescribe('API-KEY Validation', function(){
-    'use strict';
+chai.should();
+chai.use(sinonChai);
+
+describe('API-KEY Validation', function(){
 
     var port = 3210,
         bridgetownApi = require('../lib/bridgetown-api'),
         Response = require('../lib/Response'),
         middleware = bridgetownApi.middleware;
-
-    afterEach(function() {
-        server.stop();
-    });
-
 
     it('should receive a 403 because the api is trying to be used before registering an API-KEY precondition.', function(done) { //jshint ignore:line
         var options = {

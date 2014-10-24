@@ -35,7 +35,7 @@ describe('Test common responses', function(){
                 res.end.should.have.been.calledOnce;
             };
 
-        bridgetown.middleware.response(req, res, next);
+        bridgetown.middleware.initialize(req, res, next);
     });
 
     it('writeError should write custom error', function() {
@@ -56,7 +56,7 @@ describe('Test common responses', function(){
                 res.end.should.have.been.calledOnce;
             };
 
-        bridgetown.middleware.response(req, res, next);
+        bridgetown.middleware.initialize(req, res, next);
     });
 
     it('writeForbidden should return 403', function() {
@@ -74,7 +74,7 @@ describe('Test common responses', function(){
                 res.end.should.have.been.calledOnce;
             };
 
-        bridgetown.middleware.response(req, res, next);
+        bridgetown.middleware.initialize(req, res, next);
     });
 
     describe('writeFromPromise', function() {
@@ -98,7 +98,7 @@ describe('Test common responses', function(){
                     });
                 };
 
-            bridgetown.middleware.response(req, res, next);
+            bridgetown.middleware.initialize(req, res, next);
         });
 
         it('when promise is rejected should writeError', function(done) {
@@ -126,7 +126,7 @@ describe('Test common responses', function(){
                     });
                 };
 
-            bridgetown.middleware.response(req, res, next);
+            bridgetown.middleware.initialize(req, res, next);
         });
     });
 
@@ -145,7 +145,7 @@ describe('Test common responses', function(){
                 res.end.should.have.been.calledOnce;
             };
 
-        bridgetown.middleware.response(req, res, next);
+        bridgetown.middleware.initialize(req, res, next);
     });
 
     it('writeServerError should return 500', function() {
@@ -163,7 +163,7 @@ describe('Test common responses', function(){
                 res.end.should.have.been.calledOnce;
             };
 
-        bridgetown.middleware.response(req, res, next);
+        bridgetown.middleware.initialize(req, res, next);
     });
 
     it('writeServiceUnavailable should return 503', function() {
@@ -181,7 +181,7 @@ describe('Test common responses', function(){
                 res.end.should.have.been.calledOnce;
             };
 
-        bridgetown.middleware.response(req, res, next);
+        bridgetown.middleware.initialize(req, res, next);
     });
 
     it('writeSuccess should return 200', function() {
@@ -199,7 +199,7 @@ describe('Test common responses', function(){
                 res.end.should.have.been.calledOnce;
             };
 
-        bridgetown.middleware.response(req, res, next);
+        bridgetown.middleware.initialize(req, res, next);
     });
 
     it('writeTimeout should return 408', function() {
@@ -217,7 +217,7 @@ describe('Test common responses', function(){
                 res.end.should.have.been.calledOnce;
             };
 
-        bridgetown.middleware.response(req, res, next);
+        bridgetown.middleware.initialize(req, res, next);
     });
 
     it('writeUnauthorized should return unauthorized', function() {
@@ -235,7 +235,7 @@ describe('Test common responses', function(){
                 res.end.should.have.been.calledOnce;
             };
 
-        bridgetown.middleware.response(req, res, next);
+        bridgetown.middleware.initialize(req, res, next);
     });
 
 });
