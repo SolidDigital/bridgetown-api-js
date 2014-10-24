@@ -1,5 +1,4 @@
-var server = require('./server'),
-    q = require('q');
+var q = require('q');
 
 require('chai').should();
 xdescribe('API-KEY Validation', function(){
@@ -7,7 +6,6 @@ xdescribe('API-KEY Validation', function(){
 
     var port = 3210,
         bridgetownApi = require('../lib/bridgetown-api'),
-        request = require('./request'),
         Response = require('../lib/Response'),
         middleware = bridgetownApi.middleware;
 

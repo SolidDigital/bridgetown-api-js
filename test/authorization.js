@@ -1,6 +1,4 @@
-var server = require('./server'),
-    bridgetownApi = require('../lib/bridgetown-api'),
-    Response = require('../lib/Response'),
+var bridgetownApi = require('../lib/bridgetown-api'),
     middleware = bridgetownApi.middleware;
 
 require('chai').should();
@@ -8,8 +6,7 @@ require('chai').should();
 xdescribe('Authorization Validation', function(){
     'use strict';
 
-    var port = 3210,
-        request = require('./request');
+    var port = 3210;
 
     afterEach(function() {
         server.stop();

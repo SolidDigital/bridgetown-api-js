@@ -1,5 +1,4 @@
 var bridgetownApi = require('../lib/bridgetown-api'),
-    hook = require('./dependencies/hook_stdout'),
     Response = require('../lib/Response');
 
 require('chai').should();
