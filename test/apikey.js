@@ -1,17 +1,13 @@
 'use strict';
 var chai = require('chai'),
-    sinon = require('sinon'),
     sinonChai = require('sinon-chai'),
     bridgetown = require('../lib/bridgetown-api'),
-    utilities = require('./utilities'),
-    q = require('q');
+    utilities = require('./utilities');
 
 chai.should();
 chai.use(sinonChai);
 
 describe('API-KEY Validation', function(){
-
-    var bridgetown = require('../lib/bridgetown-api');
 
     it('api key validation method should have the api key passed to it', function(done) {
         var req = {
