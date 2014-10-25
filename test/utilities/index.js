@@ -29,6 +29,7 @@ function runMiddlewares(middlewares, req) {
 
     req = req || getMockRequest();
     next = createNext(middlewares, req, res);
+
     middlewares[0](req, res, next);
 
     return {

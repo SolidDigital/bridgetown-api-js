@@ -24,14 +24,23 @@ describe('API-KEY Validation', function(){
         utilities.runMiddlewares(middlewares, req);
     });
 
-    function _validateApiKey(apiKey, deferred){
-        apiKey.should.equal('1234567890');
-        deferred.resolve();
-    }
+    it('after api key validation, the api key is available as req.bridgetown.apikey', function(done) {
+        var req = {
+                headers: {
+                    'x-api-key': '1234567890'
+                }
+            },
+            middlewares = [
+                bridgetown.middleware.initialize(),
+                bridgetown.middleware.apiKey(_validateApiKey),
+                function(req) {
+                    req.bridgetown.apikey.should.equal('1234567890');
+                    done();
+                }
+            ];
 
-    function _invalidateApiKey(apiKey, deferred) {
-        deferred.reject();
-    }
+        utilities.runMiddlewares(middlewares, req);
+    });
 
     it('failing the deferred passed into the validation method results in a 403', function(done) {
         var req = {
@@ -57,4 +66,13 @@ describe('API-KEY Validation', function(){
             done();
         });
     });
+
+    function _validateApiKey(apiKey, deferred){
+        apiKey.should.equal('1234567890');
+        deferred.resolve();
+    }
+
+    function _invalidateApiKey(apiKey, deferred) {
+        deferred.reject();
+    }
 });
