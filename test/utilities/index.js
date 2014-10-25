@@ -1,6 +1,11 @@
 'use strict';
 
-var sinon = require('sinon');
+var sinon = require('sinon'),
+    chai = require('chai'),
+    sinonChai = require('sinon-chai');
+
+chai.should();
+chai.use(sinonChai);
 
 module.exports = {
     getMockRequest : getMockRequest,
