@@ -2,7 +2,7 @@
 
 --------------------------------------------------------------------------------------------------------------
 
-[![Build Status](https://travis-ci.org/Solid-Interactive/bridgetown-api-js.png?branch=master)](https://travis-ci.org/Solid-Interactive/bridgetown-api-js)  - v.1.0.3
+[![Build Status](https://travis-ci.org/Solid-Interactive/bridgetown-api-js.png?branch=master)](https://travis-ci.org/Solid-Interactive/bridgetown-api-js)  - v.2.0.0
 
 Anytime you build applications for the modern web, at some point you will have to build an API. APIs power all of our single page web apps, mobile and entertainment applications as well as integrating systems together on the server side.
 
@@ -38,7 +38,7 @@ The above code will check to see if there is an authentication header available.
 
 The overall functionality of bridgetown remained the same across the major version bump. Backward incompatibilities were introduced to make bridgetown usable across multiple routers and routes having different auth requirements. The configuration of its middleware was made more typical for express users.
 
-The three middleware methods are created by calling the middleware setup methods with you configuration. The middleware is made up of curried methods. This allows use of different instances of the middlewares on different routes and routers.
+The three middleware methods are created by calling the middleware setup methods. So, the middleware is made up of curried methods. This allows use of different instances of the middlewares on different routes and routers.
 
 Examples:
 
@@ -56,9 +56,64 @@ Bridgetown.middleware is a collection of three pieces of middleware to help add 
 
 The available layers are:
 
-* initialize - middleware that must be used upstream from all other bt middleware
+* initialize - middleware that must be used upstream from all other bt middleware, it creates cutom write methods on the response.
 * apiKey - middleware that checks existence and validity of api key header
 * authorization - middleware that checks existence and validity of authorization header
+
+Other options
+
+* turn response logger on and off using `require('bridgetown-api').logger`
+    * this is `false` by default, set to `true` to log the response writes loaded in initialize*
+* the logger is the console by default, the mixin a new logger use `require('bridgetown-api').useLogger(customLogger)`. `customLogger` will be extended onto the default logger.
+
+### initialize
+
+This is the first middleware that should be used. It adds custom success and error writes to the response. These all use a standard format. The write api is:
+
+```javascript
+// Writes a 200 with JSON data
+res.writeSuccess(<object>);
+
+// Write a 200 when promise is resolved or error if rejected
+res.writeFromPromise(<promise>);
+
+// Send a an error with custom code and message
+res.writeError({code: <code>, message: <message>});
+
+// 400
+res.writeBadRequest();//
+
+// 401
+res.writeUnauthorized();
+
+// 403
+res.writeForbidden();
+
+// 404
+res.writeNotFound();//
+
+// 408
+res.writeTimeout();
+
+// 500
+res.writeServerError();
+
+// 503
+res.writeServiceUnavailable();
+```
+
+Example
+
+```javascript
+var bridgetownApi = require('bridgetown-api'),
+    middleware = bridgetownApi.middleware;
+
+app.get('/resource', [
+    middleware.initialize(),
+    function(req, res) {
+        res.writeTimeout();
+    }]);
+```
 
 ### apiKey
 
@@ -69,8 +124,8 @@ To use `bridgetown.middleware.apiKey`, first initialize bridgetown, then create 
 
 
 ```javascript
-var bridgetown = require('bridgetown'),
-    middleware = bridgetown.middleware;
+var bridgetownApi = require('bridgetown-api'),
+    middleware = bridgetownApi.middleware;
 
 function validateApiKey(apiKey, deferred){
     // ...Your code to validate the key should go here...
@@ -93,7 +148,7 @@ It is created by passing in a auth validator method. This method will be called 
 
 The deferred can be used to signal valid or invalid auth headers.
 
-```
+```javascript
 var bridgetownApi = require('bridgetown-api'),
     middleware = bridgetownApi.middleware;
 
@@ -103,49 +158,32 @@ app.get('/resource', [
 
 ```
 
-### authToken
-
-The auth token middleware would typically be paired up with the authorization middleware. You would supply a validation method to the library and if the token is valid the next middleware would be called, if not then an error would get sent back.
-
-```
-var bridgetownApi = require('bridgetown-api'),
-    middleware = bridgetownApi.middleware,
-    q = require('q');
-
-function validateToken(apiKey){
-    var deferred = q.defer();
-
-    ...Your code to validate the token should go here...
-
-    return deferred.promise;
-}
-
-bridgetownApi.configure(function(){
-    this.validate.token(validateToken);
-});
-
-app.get('/resource', [middleware.authToken, routes.resource.get]);
-
-```
-
-
 ### Combinations
 
-The really great thing about these middlewares is that they can be used to create as secure of an API as you like. If you wanted to require and apiKey, authorization and authToken validation then the route definition would look like this.
+The really great thing about these middlewares is that they can be used to create as secure of an API as you like for each of your routers and routes. If you wanted to require an apiKey and use basic access authorization with different validation logic on two routes, then the route definitions would look like this.
 
 
-```
+```javascript
 var bridgetownApi = require('bridgetown-api'),
     middleware = bridgetownApi.middleware;
 
-app.get('/resource', [middleware.apiKey, middleware.authorization, middleware.authToken, routes.resource.get]);
+router.get('/resource', [
+    middleware.initialize()
+    middleware.apiKey(globalApiKeyValidator),
+    middleware.authorization(resourceAuthValidator),
+    routes.resource.get]);
 
+router.get('/user', [
+    middleware.initialize()
+    middleware.apiKey(globalApiKeyValidator),
+    middleware.authorization(userAuthValidator),
+    routes.resource.get]);
 ```
-
 
 ### Validation Methods
 
-Validation methods are injected in the `.configure()` function call. There are no callbacks for these methods, they require the use of promises, we typically use the `q` node module to support this functionality. To read more about `q` and promises [https://github.com/kriskowal/q/wiki/API-Reference](Click Here).
+Validation methods are curried into the middleware. The apiKey and authorization validation methods are called with the key or token and a deferred object created from a [bluebird Promise's](https://github.com/petkaantonov/bluebird/blob/master/API.md#new-promisefunctionfunction-resolve-function-reject-resolver---promise) resolve and reject methods.
+
 
 ------------------------------------------------------------------------------------------
 
@@ -247,12 +285,12 @@ That's it. Should use the logger that you pass in instead of the default. This i
 
 Fork git repo, then:
 
-* npm install
-* npm install -g grunt-cli
-* npm install -g mocha
+```shell
+npm install
+npm install -g mocha
 
-`grunt test` runs the tests.
-
+npm test
+```
 
 ## Contributors (`git shortlog -s -n`)
 

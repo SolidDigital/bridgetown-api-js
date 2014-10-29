@@ -18,13 +18,10 @@ describe('Application Logger', function(){
             write : sinon.spy()
         };
 
-    it('should pass in a custom logger implementation to api and pass if custom property is found.', function(done) {
-        bridgetownApi.configure(function(bt){
-            bt.debug = true;
-            bt.useLogger(logger);
-            bridgetownApi.logger.name.should.equal('test');
-            done();
-        });
+    it('should pass in a custom logger implementation to api and pass if custom property is found.', function() {
+        bridgetownApi.debug = true;
+        bridgetownApi.useLogger(logger);
+        bridgetownApi.logger.name.should.equal('test');
     });
 
     it('logger should output the test log.', function() {
@@ -32,5 +29,6 @@ describe('Application Logger', function(){
 
         response.write(200, 'this is a test');
         logger.write.should.have.been.calledWith('DEBUG', '200 - "this is a test"', undefined);
+        bridgetownApi.debug = false;
     });
 });
