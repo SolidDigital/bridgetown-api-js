@@ -34,16 +34,8 @@ describe('API-KEY Validation', function(){
                 bridgetown.middleware.initialize(),
                 bridgetown.middleware.apiKey(_validateApiKey),
                 function(req) {
-                    var error;
-
-                    // Try catch is necessary due to some async stuff in the middleware
-                    try {
-                        req.bridgetown.apikey.should.equal('1234567890');
-                    } catch (e) {
-                        error = e;
-                    }
-
-                    done(error);
+                    req.bridgetown.apikey.should.equal('1234567890');
+                    done();
                 }
             ];
 

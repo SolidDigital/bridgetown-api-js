@@ -16,63 +16,90 @@ Every time you build an API the same problems have to be solved.
 
 Some of these problems are going to be different for every project but some of them are the same every time. This project is designed to apply the patterns required to facilitate building an API covering the above concepts.
 
-This project does not have any dependencies and can be used with NodeJS's basic HttpRequest/Response objects but typically we would pair this with [https://github.com/visionmedia/express](Express).
+This project does not depend on express, and it can be used with NodeJS's basic HttpRequest/Response objects. The middleware uses express methods if available, so the suggested use is as [https://github.com/visionmedia/express](express) middleware.
 
-This library is most useful when using the built in Middleware objects and taking advantage of Express' ability to chain middle ware for a route. Here is a route example:
+This library is most useful when using the built in middleware objects and taking advantage of express' ability to chain or layer middleware for a route. Here is a route example:
 
 
-```
+```javascript
 var middleware = require('bridgetown-api').middleware;
 
-app.get('/resource', [middleware.authorization, routes.resource.get]);
+app.get('/resource', [
+    middleware.initialize(),
+    middleware.authorization(),
+    routes.resource.get]);
 ```
 
-The above code will check to see if there is an authentication header available. If there is then `routes.resource.get` gets called. If not then an error response comes back.
+The above code will check to see if there is an authentication header available. If there is then `routes.resource.get` gets called. If not then an error response is sent.
 
 ------------------------------------------------------------------------------------------
 
+## Migrating from 1.0.0 to 2.0.0
+
+The overall functionality of bridgetown remained the same across the major version bump. Backward incompatibilities were introduced to make bridgetown usable access multiple routers and routes and to make the configuration of its middleware more typical for express users.
+
+The three middleware methods are created by calling the middleware setup methods with you configuration. The middleware is made up of curried methods. This allows use of different instances of the middlewares on different routes and routers.
+
+Examples:
+
+```javascript
+var initializeMiddleware = bridgetownApi.middleware.initialize(optionalLogger);
+var apiKeyMiddleware = bridgetwonApi.middleware.apiKey(apiKeyValidator);
+var authenticateMiddleware = bridgetownApi.middleware.authenticate(authenticationValidator);
+```
+
 ## Middleware
 
-There is a collection of useful middleware that you can use to protect your routes. Here is a typical pattern to grant access to a domain resource.
+Bridgetown.middleware is a collection of three pieces of middleware to help add basic security to routes. Here is a typical pattern to grant access to a domain resource.
 
 ![Bridgetown API Domain Access](https://s3.amazonaws.com/SolidInteractive/images/bridgetown/bridge-town-middleware.png)
 
+The available layers are:
+
+* initialize - middleware that must be used upstream from all other bt middleware
+* apiKey - middleware that checks existence and validity of api key header
+* authorization - middleware that checks existence and validity of authorization header
 
 ### apiKey
 
-If your API requires an API Key to allow access then you can use this middleware. This middleware requires you to supply a method to validate the API Key. It also checks to make sure that a `x-api-key` is supplied.
+This middleware allows you to require an API Key to access routes.
+ This middleware allows you to supply a method to validate the API Key. It also checks to make sure that a `x-api-key` is supplied.
+
+To use `bridgetown.middleware.apiKey`, first initialize bridgetown, then create the api key middlewarre by passing in an api key validator method.
 
 
-```
-var bridgetownApi = require('bridgetown-api'),
-    middleware = bridgetownApi.middleware,
-    q = require('q');
+```javascript
+var bridgetown = require('bridgetown'),
+    middleware = bridgetown.middleware;
 
-function validateApiKey(apiKey){
-    var deferred = q.defer();
-
-    ...Your code to validate the key should go here...
-
-    return deferred.promise;
+function validateApiKey(apiKey, deferred){
+    // ...Your code to validate the key should go here...
+    // use deferred.resolve or deferred.reject//
 }
 
-bridgetownApi.configure(function(){
-    this.validate.apiKey(validateApiKey);
-});
-
-app.get('/resource', [middleware.apiKey, routes.resource.get]);
-
+app.get('/resource', [
+    middleware.initialize(),
+    middleware.apiKey(validateApiKey),
+    routes.resource.get]);
 ```
 
 ### authorization
 
-If your API requires authentication then you should be using the authorization middleware. This middleware ensures that the `authorization` header is supplied. If it is not then a failed response will be returned.
+This middleware allows you to implement [basic access authentication](http://en.wikipedia.org/wiki/Basic_access_authentication). Suggested usage is over https.
+
+This middleware ensures that the `authorization` header is supplied and valid. If it is not then a failed response will be returned.
+
+It is created by passing in a auth validator method. This method will be called with a token object and a deferred. The `tokenObject.method` is the auth method written into the authentication header. `tokenObject.token` is the decoded token in the authentication header.
+
+The deferred can be used to signal valid or invalid auth headers.
 
 ```
 var bridgetownApi = require('bridgetown-api'),
     middleware = bridgetownApi.middleware;
 
-app.get('/resource', [middleware.authorization, routes.resource.get]);
+app.get('/resource', [
+    middleware.authorization,
+    routes.resource.get]);
 
 ```
 
