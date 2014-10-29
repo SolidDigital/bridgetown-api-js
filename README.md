@@ -43,7 +43,7 @@ The three middleware methods are created by calling the middleware setup methods
 Examples:
 
 ```javascript
-var initializeMiddleware = bridgetownApi.middleware.initialize(optionalLogger);
+var initializeMiddleware = bridgetownApi.middleware.initialize();
 var apiKeyMiddleware = bridgetwonApi.middleware.apiKey(apiKeyValidator);
 var authenticateMiddleware = bridgetownApi.middleware.authenticate(authenticationValidator);
 ```
