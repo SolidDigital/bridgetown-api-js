@@ -268,23 +268,6 @@ Validation methods are curried into the middleware. The apiKey and authorization
 
 ------------------------------------------------------------------------------------------
 
-## Responses
-
-
-```
-
-Or any of these
-
-```
-response.writeUnauthorized();
-response.writeForbidden();
-response.writeNotFound();
-response.writeTimeout();
-response.writeBadRequest();
-response.writeServerError();
-response.writeServiceUnavailable();
-```
-
 ## Running Tests
 
 Fork git repo, then:
