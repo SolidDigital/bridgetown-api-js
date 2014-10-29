@@ -8,6 +8,7 @@ chai.should();
 chai.use(sinonChai);
 
 module.exports = {
+    getMockExpressResponse: getMockExpressResponse,
     getMockRequest : getMockRequest,
     getMockResponse : getMockResponse,
     runMiddlewares : runMiddlewares
@@ -23,6 +24,21 @@ function getMockResponse() {
     return {
         writeHead : sinon.spy(),
         write : sinon.spy(),
+        to:sinon.spy(),
+        end : sinon.spy()
+    };
+}
+
+
+function getMockExpressResponse() {
+    return {
+        writeHead : sinon.spy(),
+        write : sinon.spy(),
+        status : function(code){
+            this.statusCode = code;
+            return this;
+        },
+        send: sinon.spy(),
         to:sinon.spy(),
         end : sinon.spy()
     };

@@ -14,6 +14,24 @@ chai.use(sinonChai);
 
 
 describe('Test common responses', function(){
+    it('uses express.send if available', function() {
+        var req = {},
+            res = utilities.getMockExpressResponse(),
+            next = function() {
+                res.writeSuccess();
+
+                res.statusCode.should.equal(200);
+                res.send.should.have.been.calledOnce;
+
+                // in reality these will get called, but we know send is mocked, so, for testing, that's all the should happen
+                res.writeHead.should.not.have.been.called;
+                res.write.should.not.have.been.called;
+                res.end.should.not.have.been.called;
+            };
+
+        bridgetown.middleware.initialize()(req, res, next);
+    });
+
     it('writeBadRequest should return 400', function() {
         var req = {},
             res = getMockResponse(),
