@@ -32,7 +32,7 @@ describe('Authorization Validation', function(){
         });
     });
 
-    it('it calls next if an authorization heder is provided', function(done) {
+    it('it calls next if an authorization header is provided', function(done) {
         var req = {
                 headers : {
                     authorization: 'Token QWxhZGRpbjpvcGVuIHNlc2FtZQ=='

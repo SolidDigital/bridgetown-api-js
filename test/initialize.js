@@ -5,7 +5,7 @@ var chai = require('chai'),
     getMockResponse = utilities.getMockResponse,
     sinonChai = require('sinon-chai'),
     bridgetown = require('../lib/bridgetown-api'),
-    q = require('q');
+    Promise = require('bluebird');
 
 chai.should();
 chai.use(sinonChai);
@@ -75,11 +75,11 @@ describe('Test common responses', function(){
         it('when promise resolved should writeSuccess', function(done) {
             var req = {},
                 res = getMockResponse(),
-                deferred = q.defer(),
-                promise = deferred.promise,
                 next = function() {
+                    var promise = new Promise(function(resolve) {
+                        resolve({ name : 'Binary Harry' });
+                    });
                     res.writeFromPromise(promise);
-                    deferred.resolve({ name : 'Binary Harry' });
 
                     // Promises are always async, so we have to wait a cycle before checking on things
                     process.nextTick(function() {
@@ -98,14 +98,15 @@ describe('Test common responses', function(){
         it('when promise is rejected should writeError', function(done) {
             var req = {},
                 res = getMockResponse(),
-                deferred = q.defer(),
-                promise = deferred.promise,
                 next = function() {
-                    res.writeFromPromise(promise);
-                    deferred.reject({
-                        code : 808,
-                        message : 'We pau'
+                    var promise = new Promise(function(resolve, reject) {
+                        reject({
+                            code : 808,
+                            message : 'We pau'
+                        });
                     });
+
+                    res.writeFromPromise(promise);
 
                     // Promises are always async, so we have to wait a cycle before checking on things
                     process.nextTick(function() {
