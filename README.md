@@ -146,6 +146,8 @@ This middleware ensures that the `authorization` header is supplied and valid. I
 
 It is created by passing in a auth validator method. This method will be called with a token object and a deferred. The `tokenObject.method` is the auth method written into the authentication header. `tokenObject.token` is the decoded token in the authentication header.
 
+The argument the deferred is resolved with will be available downstream as, `req.bridgetown.identity`.
+
 The deferred can be used to signal valid or invalid auth headers.
 
 ```javascript
@@ -153,7 +155,9 @@ var bridgetownApi = require('bridgetown-api'),
     middleware = bridgetownApi.middleware;
 
 app.get('/resource', [
-    middleware.authorization,
+    middleware.authorization(function (tokenObject, deferred) {
+        'userOne:secretPassword' === tokenObject.token ? deferred.resolve('userOne') : deferred.reject();
+    },
     routes.resource.get]);
 
 ```
