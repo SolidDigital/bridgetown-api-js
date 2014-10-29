@@ -66,6 +66,39 @@ Other options
     * this is `false` by default, set to `true` to log the response writes loaded in initialize*
 * the logger is the console by default, the mixin a new logger use `require('bridgetown-api').useLogger(customLogger)`. `customLogger` will be extended onto the default logger.
 
+Below the debugging logger and the middleware are described:
+
+### logging
+
+We know debugging is important, so by default we added a VERY basic logger that prints to the console when the api is in `debug` mode.
+
+You can turn on `debug` mode using the module:
+
+```
+bridgetownApi.debug = true;
+```
+
+This logger is purposefully very simple, there are a ton of really good loggers out there and you are free to use any that you like. They just need to implment a `debug` few method. Many loggers out there support 'debug', 'info', 'trace', 'error', 'warn', etc so this should be pretty standard.
+
+To use a custom logger you could do this using the following code.
+
+```
+var bridgetownApi = require('bridgetown-api'),
+    //Choose solid logger as our custom logger.
+    logger = require('solid-logger-js').init({
+       adapters: [{
+           type: "console",
+           application: 'grasshopper-api',
+           machine: 'dev-server'
+       }]
+    });
+
+bridgetownApi.debug = true;
+bridgetownApi.useLogger(logger);
+```
+
+That's it. Should use the logger that you pass in instead of the default. This is beneficial so that you can write to the console, file, database or whatever your module supports.
+
 ### initialize
 
 This is the first middleware that should be used. It adds custom success and error writes to the response. These all use a standard format. The write api is:
@@ -114,6 +147,50 @@ app.get('/resource', [
         res.writeTimeout();
     }]);
 ```
+
+### Responses
+
+API responses can be pure insanity, there is no one standard and it seems that everyone does it differently. Since there is no right answer on how to handle responses, the most important thing is to be consistent. If you build lots of apps you want to come up with a response structure that you can use every time.
+
+
+To return a response you will send the bridgetown Response module your HttpResponse object and use it's `write` method.
+
+```
+var Response = require('bridgetown-api').Response,
+    response = new Response(httpResponse);
+
+response.write(code, message);
+```
+
+
+* On Success
+
+HTTP Status 200
+
+```
+{
+    ...your data...
+}
+```
+
+* On Error
+
+HTTP Status <Error Code>
+
+```
+{
+    code: code,
+    status: "error",
+    message: "Useful Error Message"
+}
+```
+
+There are many ways to write out various default errors.
+
+```
+var err = new Error({Your error message});
+err.errorCode = Response.statusCodes.{appropriate code};
+response.writeError(err);
 
 ### apiKey
 
@@ -193,47 +270,7 @@ Validation methods are curried into the middleware. The apiKey and authorization
 
 ## Responses
 
-API responses can be pure insanity, there is no one standard and it seems that everyone does it differently. Since there is no right answer on how to handle responses, the most important thing is to be consistent. If you build lots of apps you want to come up with a response structure that you can use every time.
 
-
-To return a response you will send the bridgetown Response module your HttpResponse object and use it's `write` method.
-
-```
-var Response = require('bridgetown-api').Response,
-    response = new Response(httpResponse);
-
-response.write(code, message);
-```
-
-
-* On Success
-
-HTTP Status 200
-
-```
-{
-    ...your data...
-}
-```
-
-* On Error
-
-HTTP Status <Error Code>
-
-```
-{
-    code: code,
-    status: "error",
-    message: "Useful Error Message"
-}
-```
-
-There are many ways to write out various default errors.
-
-```
-var err = new Error({Your error message});
-err.errorCode = Response.statusCodes.{appropriate code};
-response.writeError(err);
 ```
 
 Or any of these
@@ -247,43 +284,6 @@ response.writeBadRequest();
 response.writeServerError();
 response.writeServiceUnavailable();
 ```
-
-## Logging
-
-We know debugging is important, so by default we added a VERY basic logger that prints to the console when the api is in `debug` mode.
-
-You can turn on `debug` mode in the configure method.
-
-```
-bridgetownApi.configure(function(){
-    this.debug = true;
-    ... your other config code...
-});
-```
-
-This logger is purposefully very simple, there are a ton of really good loggers out there and you are free to use any that you like. They just need to implment a `debug` few method. Many loggers out there support 'debug', 'info', 'trace', 'error', 'warn', etc so this should be pretty standard.
-
-To use a custom logger you could do this using the following code.
-
-```
-var bridgetownApi = require('bridgetown-api'),
-    //Chose solid logger as our custom logger.
-    logger = require('solid-logger-js').init({
-       adapters: [{
-           type: "console",
-           application: 'grasshopper-api',
-           machine: 'dev-server'
-       }]
-    });
-
-bridgetownApi.configure(function(){
-    this.debug = true;
-    this.useLogger(logger);
-});
-```
-
-That's it. Should use the logger that you pass in instead of the default. This is beneficial so that you can write to the console, file, database or whatever your module supports.
-
 
 ## Running Tests
 
