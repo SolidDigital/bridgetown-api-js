@@ -66,38 +66,7 @@ Other options
     * this is `false` by default, set to `true` to log the response writes loaded in initialize*
 * the logger is the console by default, the mixin a new logger use `require('bridgetown-api').useLogger(customLogger)`. `customLogger` will be extended onto the default logger.
 
-Below the debugging logger and the middleware are described:
-
-### logging
-
-We know debugging is important, so by default we added a VERY basic logger that prints to the console when the api is in `debug` mode.
-
-You can turn on `debug` mode using the module:
-
-```
-bridgetownApi.debug = true;
-```
-
-This logger is purposefully very simple, there are a ton of really good loggers out there and you are free to use any that you like. They just need to implment a `debug` few method. Many loggers out there support 'debug', 'info', 'trace', 'error', 'warn', etc so this should be pretty standard.
-
-To use a custom logger you could do this using the following code.
-
-```
-var bridgetownApi = require('bridgetown-api'),
-    //Choose solid logger as our custom logger.
-    logger = require('solid-logger-js').init({
-       adapters: [{
-           type: "console",
-           application: 'grasshopper-api',
-           machine: 'dev-server'
-       }]
-    });
-
-bridgetownApi.debug = true;
-bridgetownApi.useLogger(logger);
-```
-
-That's it. Should use the logger that you pass in instead of the default. This is beneficial so that you can write to the console, file, database or whatever your module supports.
+Below the middleware available and debugging logger is described:
 
 ### initialize
 
@@ -148,7 +117,7 @@ app.get('/resource', [
     }]);
 ```
 
-### Responses
+#### Responses
 
 API responses can be pure insanity, there is no one standard and it seems that everyone does it differently. Since there is no right answer on how to handle responses, the most important thing is to be consistent. If you build lots of apps you want to come up with a response structure that you can use every time.
 
@@ -264,6 +233,38 @@ router.get('/user', [
 ### Validation Methods
 
 Validation methods are curried into the middleware. The apiKey and authorization validation methods are called with the key or token and a deferred object created from a [bluebird Promise's](https://github.com/petkaantonov/bluebird/blob/master/API.md#new-promisefunctionfunction-resolve-function-reject-resolver---promise) resolve and reject methods.
+
+### Logging
+
+We know debugging is important, so by default we added a VERY basic logger that prints to the console when the api is in `debug` mode.
+
+You can turn on `debug` mode using the module:
+
+```
+bridgetownApi.debug = true;
+```
+
+This logger is purposefully very simple, there are a ton of really good loggers out there and you are free to use any that you like. They just need to implment a `debug` few method. Many loggers out there support 'debug', 'info', 'trace', 'error', 'warn', etc so this should be pretty standard.
+
+To use a custom logger you could do this using the following code.
+
+```
+var bridgetownApi = require('bridgetown-api'),
+    //Choose solid logger as our custom logger.
+    logger = require('solid-logger-js').init({
+       adapters: [{
+           type: "console",
+           application: 'grasshopper-api',
+           machine: 'dev-server'
+       }]
+    });
+
+bridgetownApi.debug = true;
+bridgetownApi.useLogger(logger);
+```
+
+That's it. Should use the logger that you pass in instead of the default. This is beneficial so that you can write to the console, file, database or whatever your module supports.
+
 
 
 ------------------------------------------------------------------------------------------
