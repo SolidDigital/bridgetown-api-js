@@ -121,16 +121,19 @@ app.get('/resource', [
 
 API responses can be pure insanity, there is no one standard and it seems that everyone does it differently. Since there is no right answer on how to handle responses, the most important thing is to be consistent. If you build lots of apps you want to come up with a response structure that you can use every time.
 
+To return a bridgetown Response you can use the response object passed to the middlewares anywhere downstream from initialize:
 
-To return a response you will send the bridgetown Response module your HttpResponse object and use it's `write` method.
-
+```javascript
+function(req, res, next) {
+    if (something) {
+        res.writeSuccess({ a : 1 });
+    } else if (somethingElse) {
+        res.writeError(code, message);
+    } else {
+        next();
+    }
+}
 ```
-var Response = require('bridgetown-api').Response,
-    response = new Response(httpResponse);
-
-response.write(code, message);
-```
-
 
 * On Success
 
@@ -160,6 +163,9 @@ There are many ways to write out various default errors.
 var err = new Error({Your error message});
 err.errorCode = Response.statusCodes.{appropriate code};
 response.writeError(err);
+```
+
+Or you can send one of the predefined error messages. So the response api in the initialize middleware.
 
 ### apiKey
 
