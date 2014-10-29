@@ -36,7 +36,7 @@ The above code will check to see if there is an authentication header available.
 
 ## Migrating from 1.0.0 to 2.0.0
 
-The overall functionality of bridgetown remained the same across the major version bump. Backward incompatibilities were introduced to make bridgetown usable access multiple routers and routes and to make the configuration of its middleware more typical for express users.
+The overall functionality of bridgetown remained the same across the major version bump. Backward incompatibilities were introduced to make bridgetown usable across multiple routers and routes having different auth requirements. The configuration of its middleware was made more typical for express users.
 
 The three middleware methods are created by calling the middleware setup methods with you configuration. The middleware is made up of curried methods. This allows use of different instances of the middlewares on different routes and routers.
 
