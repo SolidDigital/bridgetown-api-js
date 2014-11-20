@@ -200,7 +200,7 @@ It is created by passing in a auth validator method. This method will be called 
 
 The argument the deferred is resolved with will be available downstream as, `req.bridgetown.identity`.
 
-The deferred can be used to signal valid or invalid auth headers.
+The deferred can be used to signal valid or invalid auth headers. By default a 401 is sent on rejection.
 
 ```javascript
 var bridgetownApi = require('bridgetown-api'),
@@ -209,6 +209,27 @@ var bridgetownApi = require('bridgetown-api'),
 app.get('/resource', [
     middleware.authorization(function (tokenObject, deferred) {
         'userOne:secretPassword' === tokenObject.token ? deferred.resolve('userOne') : deferred.reject();
+    },
+    routes.resource.get]);
+
+```
+
+The error message returned by the authorization method can be customized:
+
+```javascript
+var bridgetownApi = require('bridgetown-api'),
+    middleware = bridgetownApi.middleware;
+
+app.get('/resource', [
+    middleware.authorization(function (tokenObject, deferred) {
+        'userOne:secretPassword' === tokenObject.token ?
+            deferred.resolve('userOne') :
+
+            // The following with write an error with the given code and message
+            deferred.reject({
+                code : 808,
+                message : 'We pau'
+            });
     },
     routes.resource.get]);
 

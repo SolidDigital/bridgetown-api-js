@@ -104,7 +104,8 @@ describe('Authorization Validation', function(){
         utilities.runMiddlewares(middlewares, req);
     });
 
-    it('should attach Google as the authentication method when given google in the token - even with 2 spaces for separation.', function(done) {
+    it('should attach Google as the authentication method when given google in the token - even with 2 spaces for ' +
+        'separation.', function(done) {
         var req = {
                 headers : {
                     authorization: 'Google  QWxhZGRpbjpvcGVuIHNlc2FtZQ=='
@@ -142,7 +143,8 @@ describe('Authorization Validation', function(){
         utilities.runMiddlewares(middlewares, req);
     });
 
-    it('should set req.bridgetown.identity to what is used to resolve the deferred passed to the auth method', function(done) {
+    it('should set req.bridgetown.identity to what is used to resolve the deferred passed to the auth method',
+        function(done) {
         var req = {
                 headers : {
                     authorization: 'QWxhZGRpbjpvcGVuIHNlc2FtZQ=='
@@ -202,6 +204,68 @@ describe('Authorization Validation', function(){
                 code: 401,
                 status: 'error',
                 message: 'Unauthorized'
+            }));
+            res.end.should.have.been.calledOnce;
+            done();
+        });
+    });
+
+    it('rejecting the deferred passed into the auth method with a code and message results in writing an error with ' +
+        'that code and message', function(done) {
+        var req = {
+                headers : {
+                    authorization: 'Basic QWxhZGRpbjpvcGVuIHNlc2FtZQ=='
+                }
+            },
+            middlewares = [
+                bridgetown.middleware.initialize(),
+                bridgetown.middleware.authorization(function(tokenObj, deferred) {
+                    deferred.reject({
+                        code: 808,
+                        message: 'We pau'
+                    });
+                })
+            ],
+            options = utilities.runMiddlewares(middlewares, req);
+
+        process.nextTick(function() {
+            var res = options.res;
+            res.writeHead.should.have.been.calledWith(808, {'Content-Type': 'application/json'});
+            res.write.should.have.been.calledWith(JSON.stringify({
+                code: 808,
+                status: 'error',
+                message: 'We pau'
+            }));
+            res.end.should.have.been.calledOnce;
+            done();
+        });
+    });
+
+    it('rejecting the deferred passed into the auth method with an errorCode and message results in writing an error ' +
+    'with that code and message', function(done) {
+        var req = {
+                headers : {
+                    authorization: 'Basic QWxhZGRpbjpvcGVuIHNlc2FtZQ=='
+                }
+            },
+            middlewares = [
+                bridgetown.middleware.initialize(),
+                bridgetown.middleware.authorization(function(tokenObj, deferred) {
+                    deferred.reject({
+                        errorCode: 999,
+                        message: 'Not one thousand'
+                    });
+                })
+            ],
+            options = utilities.runMiddlewares(middlewares, req);
+
+        process.nextTick(function() {
+            var res = options.res;
+            res.writeHead.should.have.been.calledWith(999, {'Content-Type': 'application/json'});
+            res.write.should.have.been.calledWith(JSON.stringify({
+                code: 999,
+                status: 'error',
+                message: 'Not one thousand'
             }));
             res.end.should.have.been.calledOnce;
             done();

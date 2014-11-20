@@ -23,7 +23,8 @@ describe('Test common responses', function(){
                 res.statusCode.should.equal(200);
                 res.send.should.have.been.calledOnce;
 
-                // in reality these will get called, but we know send is mocked, so, for testing, that's all the should happen
+                // in reality these will get called, but we know send is mocked, so, for testing,
+                // that's all the should happen
                 res.writeHead.should.not.have.been.called;
                 res.write.should.not.have.been.called;
                 res.end.should.not.have.been.called;
